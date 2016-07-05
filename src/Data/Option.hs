@@ -5,7 +5,6 @@ import Control.Applicative
 import Control.DeepSeq
 import Control.Monad
 import Data.Aeson
-import Data.Store
 import GHC.Generics
 
 data Option a
@@ -14,7 +13,6 @@ data Option a
    deriving (Show, Eq, Ord, Generic)
 
 instance NFData a => NFData (Option a)
-instance Store a => Store (Option a)
 
 instance Functor Option where
     fmap f x =
