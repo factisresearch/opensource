@@ -6,8 +6,6 @@ import Data.Option
 import Data.StrictList
 import Data.StrictTuple
 
-import Test.Framework
-
 import Prelude hiding
     ( (!!)
     , all
@@ -35,6 +33,7 @@ import Prelude hiding
     , zip
     , zipWith
     )
+import Test.Framework
 import qualified Prelude as P
 
 test_nub :: IO ()

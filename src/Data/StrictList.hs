@@ -97,6 +97,8 @@ import Data.Option hiding (catOptions, mapOption)
 import Data.StrictList.Types
 import Data.StrictTuple
 
+import Data.Hashable
+import Data.Ord (comparing)
 import Prelude hiding
     ( (!!)
     , all
@@ -124,9 +126,6 @@ import Prelude hiding
     , zip
     , zipWith
     )
-
-import Data.Hashable
-import Data.Ord (comparing)
 import qualified Data.Foldable as F
 import qualified Data.HashSet as HashSet
 import qualified Data.List as L

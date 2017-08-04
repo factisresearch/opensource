@@ -8,12 +8,10 @@
 {-# LANGUAGE TypeFamilies #-}
 module Data.StrictList.Types where
 
-import Data.Aeson
-import Test.QuickCheck
-
 import Control.Applicative
 import Control.DeepSeq
 import Control.Monad hiding (forM_, mapM, mapM_)
+import Data.Aeson
 import Data.Data
 import Data.Hashable (Hashable)
 import Data.Monoid
@@ -21,6 +19,7 @@ import Data.Traversable hiding (mapM)
 import GHC.Exts
 import GHC.Generics (Generic)
 import Prelude (Eq(..), Ord(..), Show(..), (.), (+), Bool)
+import Test.QuickCheck
 import Text.Read
 import qualified Control.Monad.Fail
 import qualified Data.Foldable as F

@@ -3,10 +3,9 @@ module Option where
 
 import Data.Option
 
-import Test.Framework
-
 import Control.Monad (forM_)
 import Data.List
+import Test.Framework
 
 test_ord :: IO ()
 test_ord =

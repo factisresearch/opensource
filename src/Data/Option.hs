@@ -7,17 +7,16 @@ module Data.Option where
 
 import Data.StrictList.Types
 
-import Data.Aeson
-import Data.Hashable
-import Test.QuickCheck
-import qualified Control.Monad.Fail as Fail
-
 import Control.Applicative
 import Control.DeepSeq
 import Control.Monad
 import Control.Monad.Trans
+import Data.Aeson
+import Data.Hashable
 import Data.Typeable
 import GHC.Generics (Generic)
+import Test.QuickCheck
+import qualified Control.Monad.Fail as Fail
 
 data Option a
    = None

@@ -1,12 +1,11 @@
 {-# LANGUAGE DeriveDataTypeable #-}
 module Data.Choice where
 
-import Test.QuickCheck
-
 import Control.DeepSeq (NFData(..))
 import Data.Bifunctor
 import Data.Data
 import Data.Hashable
+import Test.QuickCheck
 
 data Choice a b
     = This !a

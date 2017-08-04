@@ -15,15 +15,14 @@ module Data.StrictTuple
     )
 where
 
-import Data.Aeson
-import Data.Strict.Tuple hiding (fst, snd)
-import Test.QuickCheck
-import qualified Data.Strict.Tuple
-
 import Control.DeepSeq (NFData(..))
+import Data.Aeson
 import Data.Data
 import Data.Hashable
+import Data.Strict.Tuple hiding (fst, snd)
 import Data.Tuple
+import Test.QuickCheck
+import qualified Data.Strict.Tuple
 
 deriving instance Typeable Pair
 deriving instance (Data a, Data b) => Data (Pair a b)
