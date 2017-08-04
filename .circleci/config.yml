@@ -1,0 +1,59 @@
+version: 2
+jobs:
+  build:
+    working_directory: ~/strict-data
+    docker:
+      - image: fpco/stack-build:lts-8.20
+    steps:
+      - checkout
+      - restore_cache:
+          key: stack-cache
+      - run:
+          name: stack setup
+          command: 'stack setup'
+      - run:
+          name: stack install dependencies
+          command: 'stack build --test --only-dependencies'
+      - save_cache:
+          key: stack-cache
+          paths:
+            - ~/.stack
+            - ~/strict-data/.stack-work
+      - run:
+          name: stack build
+          command: 'stack build --fast --pedantic'
+      - run:
+          name: stack test
+          command: 'stack test --fast'
+  build-nightly:
+    working_directory: ~/strict-data2
+    docker:
+      - image: fpco/stack-build:lts-8.20
+    steps:
+      - checkout
+      - restore_cache:
+          key: stack-cache-nightly
+      - run:
+          name: stack setup
+          command: 'stack --resolver nightly setup'
+      - run:
+          name: stack install dependencies
+          command: 'stack --resolver nightly build --test --only-dependencies'
+      - save_cache:
+          key: stack-cache-nightly
+          paths:
+            - ~/.stack
+            - ~/strict-data2/.stack-work
+      - run:
+          name: stack build
+          command: 'stack --resolver nightly build --fast --pedantic'
+      - run:
+          name: stack test
+          command: 'stack --resolver nightly test --fast'
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - build
+      - build-nightly
