@@ -1,13 +1,15 @@
 name:                strict-data
-version:             0.1.1.0
-synopsis:            Verious useful strict data structures
-description:         Please see README.md
+version:             0.2.0.0
+synopsis:            A collection of commonly used strict data structures
+description:         A collection of commonly used strict data structures
 homepage:            https://github.com/agrafix/strict-data#readme
 license:             BSD3
 license-file:        LICENSE
 author:              Alexander Thiemann
+                   , factis research GmbH
 maintainer:          mail@athiemann.net
 copyright:           2016 Alexander Thiemann <mail@athiemann.net>
+                   , 2017 factis research GmbH
 category:            Data
 build-type:          Simple
 extra-source-files:
@@ -17,9 +19,11 @@ cabal-version:       >=1.10
 library
   hs-source-dirs:      src
   exposed-modules:     Data.Option
-  build-depends:       base >= 4.7 && < 5, aeson, deepseq
+  build-depends:       base >= 4.7 && < 5
+                     , aeson
+                     , deepseq
   default-language:    Haskell2010
 
 source-repository head
   type:     git
-  location: https://github.com/agrafix/strict-data
+  location: https://github.com/factisresearch/strict-data
