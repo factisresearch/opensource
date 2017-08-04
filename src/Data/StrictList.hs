@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fno-warn-name-shadowing #-}
 {-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE MonadComprehensions #-}
 {-# LANGUAGE ScopedTypeVariables #-}
@@ -96,12 +97,6 @@ import Data.Option hiding (catOptions, mapOption)
 import Data.StrictList.Types
 import Data.StrictTuple
 
-import Data.Hashable
-import qualified Data.HashSet as HashSet
-import qualified Data.Text as T
-
-import Control.Monad (liftM)
-import Data.Ord (comparing)
 import Prelude hiding
     ( (!!)
     , all
@@ -129,8 +124,13 @@ import Prelude hiding
     , zip
     , zipWith
     )
+
+import Data.Hashable
+import Data.Ord (comparing)
 import qualified Data.Foldable as F
+import qualified Data.HashSet as HashSet
 import qualified Data.List as L
+import qualified Data.Text as T
 import qualified Data.Traversable as Tr
 import qualified Prelude as P
 
@@ -199,7 +199,7 @@ deleteIdx idx lst@(x :! xs) =
       i ->
           if i < 0
           then lst
-          else x :! (deleteIdx (i-1) xs)
+          else x :! deleteIdx (i-1) xs
 
 -- | 'delete' @x@ removes the first occurrence of @x@ from its list argument.
 -- NOTE: Implementation copied from Data.List.
@@ -235,7 +235,7 @@ findIndex :: (a -> Bool) -> StrictList a -> Option Int
 findIndex _ Nil = None
 findIndex p (x :! xs)
     | p x = Some 0
-    | otherwise = fmap (+1) $ findIndex p xs
+    | otherwise = (+1) <$> findIndex p xs
 
 map :: (a -> b) -> StrictList a -> StrictList b
 map = fmap
@@ -249,7 +249,7 @@ mapM_ = F.mapM_
 filter :: (a -> Bool) -> StrictList a -> StrictList a
 filter _ Nil = Nil
 filter pred (x :! xs)
-    | pred x = x :! (filter pred xs)
+    | pred x = x :! filter pred xs
     | otherwise = filter pred xs
 
 catMaybes :: StrictList (Maybe a) -> StrictList a
@@ -257,7 +257,7 @@ catMaybes xs =
     case xs of
       Nil -> Nil
       (Nothing :! xs) -> catMaybes xs
-      (Just x :! xs ) -> x :! (catMaybes xs)
+      (Just x :! xs ) -> x :! catMaybes xs
 
 mapMaybe :: (a -> Maybe b) -> StrictList a -> StrictList b
 mapMaybe f = catMaybes . map f
@@ -270,20 +270,19 @@ catOptions xs =
     case xs of
       Nil -> Nil
       (None :! xs) -> catOptions xs
-      (Some x :! xs) -> x :! (catOptions xs)
+      (Some x :! xs) -> x :! catOptions xs
 
 catOptionsL :: [Option a] -> StrictList a
 catOptionsL xs =
     case xs of
       [] -> Nil
       (None : xs) -> catOptionsL xs
-      (Some x : xs) -> x :! (catOptionsL xs)
+      (Some x : xs) -> x :! catOptionsL xs
 
 take :: Int -> StrictList a -> StrictList a
 take _ Nil = Nil
 take n _ | n <= 0 = Nil
-take n (x :! xs) =
-    (x :! take (n-1) xs)
+take n (x :! xs) = x :! take (n-1) xs
 
 sort :: (Ord a) => StrictList a -> StrictList a
 sort = sortBy compare
@@ -368,7 +367,7 @@ concatMapSL :: (a -> StrictList b) -> SL a -> StrictList b
 concatMapSL = concatMap
 
 concatMapM  :: (Monad m) => (a -> m (SL b)) -> SL a -> m (SL b)
-concatMapM f xs = mapM f xs >>= return . concat
+concatMapM f xs = concat <$> mapM f xs
 
 any :: (a -> Bool) -> StrictList a -> Bool
 any = F.any
@@ -452,7 +451,7 @@ singleton x =
     x :! Nil
 
 lookupM' :: (Monad m, Eq a) => (a -> String) -> a -> StrictList (a :!: b) -> m b
-lookupM' showA x = liftM snd' . lookupM'' showA (Just . fst') x
+lookupM' showA x = fmap snd' . lookupM'' showA (Just . fst') x
 
 -- | @lookupM'' showKey getKey getValue key list@ searches for @key@ in
 -- @list@ using @getKey@ as the key extraction function and @showKey@ to print
@@ -484,7 +483,7 @@ lookup :: Eq a => a -> StrictList (a :!: b) -> Option b
 lookup = lookupM' (const "fail in Option is None")
 
 insert :: Ord a => a -> SL a -> SL a
-insert e ls = insertBy compare e ls
+insert = insertBy compare
 
 insertBy :: (a -> a -> Ordering) -> a -> SL a -> SL a
 insertBy cmp x yss =
@@ -496,8 +495,8 @@ insertBy cmp x yss =
             _ -> x :! yss
 
 partition :: (a -> Bool) -> SL a -> (SL a, SL a)
-partition p xs =
-    F.foldr (select p) (Nil, Nil) xs
+partition p =
+    F.foldr (select p) (Nil, Nil)
     where
         select :: (a -> Bool) -> a -> (SL a, SL a) -> (SL a, SL a)
         select p x (ts, fs)
@@ -570,4 +569,3 @@ nub = nub' HashSet.empty
             x :! xs
                 | x `HashSet.member` acc -> nub' acc xs
                 | otherwise -> x :! nub' (HashSet.insert x acc) xs
-
