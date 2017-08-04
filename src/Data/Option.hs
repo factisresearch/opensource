@@ -5,16 +5,19 @@
 {-# LANGUAGE DeriveTraversable #-}
 module Data.Option where
 
+import Data.StrictList.Types
+
+import Data.Aeson
+import Data.Hashable
+import Test.QuickCheck
+import qualified Control.Monad.Fail as Fail
+
 import Control.Applicative
 import Control.DeepSeq
 import Control.Monad
 import Control.Monad.Trans
-import Data.Aeson
-import Data.Hashable
 import Data.Typeable
 import GHC.Generics (Generic)
-import Test.QuickCheck
-import qualified Control.Monad.Fail as Fail
 
 data Option a
    = None
@@ -154,9 +157,9 @@ optionToList :: Option a -> [a]
 optionToList (Some a) = [a]
 optionToList None = []
 
--- optionToSL :: Option a -> StrictList a
--- optionToSL (Some a) = a :! Nil
--- optionToSL None = Nil
+optionToSL :: Option a -> StrictList a
+optionToSL (Some a) = a :! Nil
+optionToSL None = Nil
 
 listToOption :: [a] -> Option a
 listToOption [] = None
@@ -190,8 +193,8 @@ forOptionM xs f = liftM catOptions (forM xs (runOptionT . f))
 mapOptionM :: Monad m => (a -> OptionT m b) -> [a] -> m [b]
 mapOptionM = flip forOptionM
 
--- safeFromSome :: (HasCallStack) => Option a -> a
--- safeFromSome = fromOption (safeError "fromSome None")
+fromSome :: Option a -> a
+fromSome = fromOption (error "fromSome None")
 
 -- optionToFail :: String -> Option a -> Fail a
 -- optionToFail _ (Some x) = Ok x
