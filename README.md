@@ -4,6 +4,7 @@
 
 This package currently contains strict data structures and useful instances for:
 
+* `Data.Choice` to replace `Data.Either`
 * `Data.Option` to replace `Data.Maybe`
 * `Data.StrictList` to replace `Data.List`
 * `Data.StrictTuple` to replace tuples
