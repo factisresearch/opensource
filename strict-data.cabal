@@ -18,7 +18,8 @@ cabal-version:       >=1.10
 
 library
   hs-source-dirs:      src
-  exposed-modules:     Data.Option
+  exposed-modules:     Data.Choice
+                     , Data.Option
                      , Data.StrictList
                      , Data.StrictTuple
   other-modules:       Data.StrictList.Types
