@@ -1,15 +1,13 @@
 {-# OPTIONS_GHC -F -pgmF htfpp #-}
 module Main where
 
-import Control.Monad
+import {-@ HTF_TESTS @-} Option
+import {-@ HTF_TESTS @-} StrictList
+
 import Data.Option
-import Data.List
+
+import Control.Monad
 import Test.Framework
+import Data.List
 
-main = htfMain htf_thisModulesTests
-
-test_ord :: IO ()
-test_ord =
-    let list = [None, None, Some "x", Some "x", Some "y"]
-    in forM_ (permutations list) $ \perm ->
-           assertEqual list (sort perm)
+main = htfMain htf_importedTests
