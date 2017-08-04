@@ -1,5 +1,5 @@
 {-# LANGUAGE TypeOperators #-}
-{-# OPTIONS_GHC -F -pgmF htfpp #-}
+{-# OPTIONS_GHC -F -pgmF htfpp -fno-warn-type-defaults #-}
 module StrictList (htf_thisModulesTests) where
 
 import Data.Option

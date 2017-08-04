@@ -6,4 +6,5 @@ import {-@ HTF_TESTS @-} StrictList
 
 import Test.Framework
 
+main :: IO ()
 main = htfMain htf_importedTests
