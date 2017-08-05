@@ -1,3 +1,5 @@
+{-# OPTIONS_GHC -fno-warn-name-shadowing #-}
+{-# OPTIONS_GHC -fno-warn-orphans #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE PatternSynonyms #-}
@@ -6,9 +8,8 @@
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE TypeSynonymInstances #-}
 {-# LANGUAGE UndecidableInstances #-}
-{-# OPTIONS_GHC -fno-warn-name-shadowing -fno-warn-orphans #-}
 module Data.Fail
-    ( Fail(..), isFail, isOk
+    ( Fail(..), pattern Fail, isFail, isOk
     , FailT(FailT), runFailT, FIO
     , failEitherStr, failEitherShow, failEitherText
     , runExceptTFail, failInM, failInM', failInM''
@@ -20,7 +21,6 @@ module Data.Fail
     , runExceptTorFail, maybeToFail, eitherToFail
     , fromFailString, partitionFails
     , Control.Monad.Fail.MonadFail
-    , pattern Fail
 ) where
 
 
@@ -60,7 +60,7 @@ instance MonadBaseControl b m => MonadBaseControl b (FailT m) where
 
 instance MonadTransControl FailT where
     type StT FailT a = Fail a
-    liftWith f = FailT $ fmap return $ f $ runFailT
+    liftWith f = FailT $ return <$> f runFailT
     restoreT = FailT
 
 instance Monad m => MonadError String (FailT m) where
@@ -74,7 +74,7 @@ instance MonadTrans FailT where
            return (Ok a)
 
 instance MonadIO m => MonadIO (FailT m) where
-    liftIO io = FailT (liftIO io >>= (return . Ok))
+    liftIO io = FailT $ fmap Ok (liftIO io)
 
 instance MonadState s m => MonadState s (FailT m) where
     get = lift get
@@ -95,7 +95,7 @@ instance MonadWriter w m => MonadWriter w (FailT m) where
         do a <- m
            return $!
                case a of
-                 Fail l -> (Fail l, id)
+                 Err l -> (Err l, id)
                  Ok (r, f) -> (Ok r, f)
 
 mapFailT :: (m (Fail a) -> n (Fail b)) -> FailT m a -> FailT n b
@@ -109,11 +109,11 @@ m `catchFailT` h =
     FailT $
     do a <- runFailT m
        case a of
-         Fail  l -> runFailT (h l)
+         Err l -> runFailT (h $ T.unpack l)
          Ok r -> return (Ok r)
 
 isFail :: Fail a -> Bool
-isFail (Fail _) = True
+isFail (Err _) = True
 isFail (Ok _) = False
 
 isOk :: Fail a -> Bool
@@ -147,14 +147,14 @@ instance MonadFix Fail where
     mfix f = let a = f (unOk a) in a
         where
           unOk (Ok x) = x
-          unOk (Fail msg) = error ("mfix failed: " ++ msg)
+          unOk (Err msg) = error ("mfix failed: " ++ T.unpack msg)
 
 instance MonadFix m => MonadFix (FailT m) where
     mfix f =
         FailT $ mfix $ \a -> runFailT $ f $
         case a of
           Ok r -> r
-          Fail msg -> error ("FailT.mfix failed: " ++ msg)
+          Err msg -> error ("FailT.mfix failed: " ++ T.unpack msg)
 
 instance Monad m => Monad (FailT m) where
     return = returnFailT
@@ -170,11 +170,11 @@ instance (Functor m, Monad m) => Applicative (FailT m) where
         FailT $
             do mf <- f
                case mf of
-                 Fail msg -> return (Fail msg)
+                 Err msg -> return (Err msg)
                  Ok k ->
                      do mv <- v
                         case mv of
-                          Fail msg -> return (Fail msg)
+                          Err msg -> return (Err msg)
                           Ok x -> return (Ok (k x))
 
 instance Monad m => Alternative (FailT m) where
@@ -194,13 +194,13 @@ failBind ma f =
     case ma of
       Ok x -> {-# SCC "Fail/>>=/f" #-} (f x)
       -- is there a better way to avoid allocations?
-      Fail x -> {-# SCC "Fail/>>=/Fail" #-} (Fail x)
+      Err x -> {-# SCC "Fail/>>=/Fail" #-} (Err x)
 {-# INLINE failBind #-}
 
 failAp :: Fail (a -> b) -> Fail a -> Fail b
 failAp (Ok f) (Ok a) = Ok (f a)
-failAp (Fail msg) _ = Fail msg
-failAp _ (Fail msg) = Fail msg
+failAp (Err msg) _ = Err msg
+failAp _ (Err msg) = Err msg
 {-# INLINE failAp #-}
 
 failZero :: Fail a
@@ -214,7 +214,7 @@ failPlus _ x = x
 
 failSwitch :: (String -> c) -> (a -> c) -> Fail a -> c
 failSwitch _ g (Ok x) = g x
-failSwitch f _ (Fail x) = f x
+failSwitch f _ (Err x) = f (T.unpack x)
 {-# INLINE failSwitch #-}
 
 {-# INLINE runFailT #-}
@@ -232,11 +232,11 @@ bindFailT (FailT action) f =
     do mx <- action
        case mx of
          Ok x -> unFailT (f x)
-         Fail m -> return (Fail m)
+         Err m -> return (Err m)
 
 instance MonadError String Fail where
     throwError             = Fail
-    Fail  l `catchError` h = h l
+    Err l `catchError` h = h (T.unpack l)
     Ok r `catchError` _    = Ok r
 
 failMaybe :: String -> Maybe a -> Fail a
@@ -274,14 +274,14 @@ instance MonadFailure IO where
 
 instance MonadFailure Fail where
     ok@(Ok _) `catchFailure` _ =  ok
-    Fail msg `catchFailure` hdl = hdl msg
+    Err msg `catchFailure` hdl = hdl (T.unpack msg)
 
 instance Monad m => MonadFailure (FailT m) where
     FailT action `catchFailure` hdl =
         FailT $
         do result <- action
            case result of
-             Fail msg -> unFailT (hdl msg)
+             Err msg -> unFailT (hdl $ T.unpack msg)
              Ok _ -> return result
 
 instance (MonadFail (ReaderT r m), MonadFailure m) => MonadFailure (ReaderT r m) where
@@ -296,7 +296,7 @@ failInM' :: Monad m => Fail a -> (String -> String) -> m a
 failInM' f h =
     case f of
       Ok x -> return x
-      Fail msg -> fail (h msg)
+      Err msg -> fail (h $ T.unpack msg)
 
 failInM'' :: Monad m => String -> Fail a -> m a
 failInM'' what = flip failInM' (("Failed to " ++ what ++ ":")++)
@@ -305,11 +305,11 @@ mapFail :: (String -> String) -> Fail a -> Fail a
 mapFail f x =
     case x of
       Ok _ -> x
-      Fail msg -> Fail (f msg)
+      Err msg -> Fail (f $ T.unpack msg)
 
 failToEither :: Fail a -> Either String a
 failToEither (Ok x) = Right x
-failToEither (Fail x) = Left x
+failToEither (Err x) = Left (T.unpack x)
 
 failToMaybe :: Fail a -> Maybe a
 failToMaybe (Ok x) = Just x
@@ -321,7 +321,7 @@ failForIOException action =
 
 catFails :: [Fail a] -> [a]
 catFails [] = []
-catFails ((Fail _):xs) = catFails xs
+catFails ((Err _):xs) = catFails xs
 catFails ((Ok a):xs) = a:(catFails xs)
 
 fromFail :: (String -> a) -> Fail a -> a
@@ -331,7 +331,7 @@ fromFailString :: Fail a -> Maybe String
 fromFailString f =
     case f of
       Ok _ -> Nothing
-      Fail str -> Just str
+      Err str -> Just (T.unpack str)
 
 runError :: forall a. (forall m. Monad m => m a) -> Either String a
 runError x = runIdentity (runExceptT x)
@@ -345,8 +345,8 @@ partitionFails l = go l ([], [])
                 (reverse good, reverse bad)
             (Ok x : rest) ->
                 go rest (x : good, bad)
-            (Fail s : rest) ->
-                go rest (good, s : bad)
+            (Err s : rest) ->
+                go rest (good, T.unpack s : bad)
 
 eitherToError :: MonadError e m => Either e a -> m a
 eitherToError = either throwError return
