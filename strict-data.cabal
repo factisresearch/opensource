@@ -48,7 +48,8 @@ test-suite strict-data-test
   type:                exitcode-stdio-1.0
   hs-source-dirs:      test
   main-is:             Spec.hs
-  other-modules:       Option
+  other-modules:       Fail
+                     , Option
                      , StrictList
   build-depends:       base >= 4.7 && < 5
                      , strict-data
