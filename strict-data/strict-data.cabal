@@ -63,6 +63,14 @@ test-suite strict-data-test
                      , vector
   ghc-options:       -Wall
 
+test-suite strict-data-doctest
+  type:                exitcode-stdio-1.0
+  hs-source-dirs:      test
+  main-is:             Doc.hs
+  build-depends:       base >= 4.7 && < 5
+                     , doctest
+                     , filemanip
+
 source-repository head
   type:     git
-  location: https://github.com/factisresearch/strict-data
+  location: https://github.com/factisresearch/opensource-mono

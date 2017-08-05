@@ -278,6 +278,9 @@ catOptionsL xs =
       (None : xs) -> catOptionsL xs
       (Some x : xs) -> x :! catOptionsL xs
 
+-- |
+-- >>> take 3 (sl [1, 2, 3, 4, 5, 6, 7])
+-- [1,2,3]
 take :: Int -> StrictList a -> StrictList a
 take _ Nil = Nil
 take n _ | n <= 0 = Nil
@@ -286,6 +289,9 @@ take n (x :! xs) = x :! take (n-1) xs
 sort :: (Ord a) => StrictList a -> StrictList a
 sort = sortBy compare
 
+-- |
+-- >>> sortOn snd (sl [("foo", 10), ("bar", 1), ("baz", 100)])
+-- [("bar",1),("foo",10),("baz",100)]
 sortOn :: (Ord b) => (a -> b) -> StrictList a -> StrictList a
 sortOn f =
     map snd
@@ -299,6 +305,8 @@ replicate i a =
       0 -> Nil
       n -> a :! replicate (n-1) a
 
+-- |
+-- prop> reverse (reverse xs) == xs
 reverse :: StrictList a -> StrictList a
 reverse l =  rev l Nil
   where

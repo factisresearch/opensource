@@ -14,6 +14,7 @@ import Data.Vector.Generic.Mutable hiding (MVector)
 import qualified Data.Vector.Generic.Mutable as VGM
 import qualified Data.Vector.Mutable as VM
 
+-- | 'MVector' is a strict wrapper around "Data.Vector.Mutable"'s 'Data.Vector.Mutable.MVector'
 newtype MVector s a = MVector (VM.MVector s a)
 
 instance VGM.MVector MVector a where
