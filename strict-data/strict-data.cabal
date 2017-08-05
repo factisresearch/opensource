@@ -23,6 +23,8 @@ library
                      , Data.Option
                      , Data.StrictList
                      , Data.StrictTuple
+                     , Data.StrictVector
+                     , Data.StrictVector.Mutable
   other-modules:       Data.Fail.Types
                      , Data.StrictList.Types
   build-depends:       base >= 4.7 && < 5
@@ -41,6 +43,8 @@ library
                      , transformers
                      , transformers-base
                      , unordered-containers
+                     , vector
+                     , vector-algorithms
   default-language:    Haskell2010
   ghc-options:       -Wall
 
@@ -51,9 +55,12 @@ test-suite strict-data-test
   other-modules:       Fail
                      , Option
                      , StrictList
+                     , StrictVector
+                     , StrictVector.Mutable
   build-depends:       base >= 4.7 && < 5
                      , strict-data
                      , HTF
+                     , vector
   ghc-options:       -Wall
 
 source-repository head

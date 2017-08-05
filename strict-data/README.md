@@ -9,3 +9,5 @@ This package currently contains strict data structures and useful instances for:
 * `Data.Option` to replace `Data.Maybe`
 * `Data.StrictList` to replace `Data.List`
 * `Data.StrictTuple` to replace tuples
+* `Data.StrictVector` and `Data.StrictVector.Mutable` to replace `Data.Vector`
+  and `Data.Vector.Mutable`
