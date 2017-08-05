@@ -1,6 +1,6 @@
 # Various strict data structures
 
-[![CircleCI](https://circleci.com/gh/factisresearch/strict-data.svg?style=svg)](https://circleci.com/gh/factisresearch/strict-data)
+[![CircleCI](https://circleci.com/gh/factisresearch/opensource-mono.svg?style=svg)](https://circleci.com/gh/factisresearch/opensource-mono)
 
 This package currently contains strict data structures and useful instances for:
 
