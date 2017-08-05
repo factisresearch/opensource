@@ -33,7 +33,7 @@ import Control.Monad.Trans.Control
     , MonadTransControl (..) )
 import Control.Applicative (Alternative(..))
 import Control.Exception (ErrorCall(..), IOException, catch)
-import Control.Monad (MonadPlus(..), liftM)
+import Control.Monad (MonadPlus(..))
 import Control.Monad.Except (ExceptT, runExceptT, MonadError(..))
 import Control.Monad.Fix
 import Control.Monad.IO.Class
@@ -59,7 +59,7 @@ instance MonadBaseControl b m => MonadBaseControl b (FailT m) where
 
 instance MonadTransControl FailT where
     type StT FailT a = Fail a
-    liftWith f = FailT $ liftM return $ f $ runFailT
+    liftWith f = FailT $ fmap return $ f $ runFailT
     restoreT = FailT
 
 instance Monad m => MonadError String (FailT m) where
@@ -80,7 +80,7 @@ instance MonadState s m => MonadState s (FailT m) where
     put = lift . put
 
 instance MonadResource m => MonadResource (FailT m) where
-    liftResourceT = FailT . liftM Ok . liftResourceT
+    liftResourceT = FailT . fmap Ok . liftResourceT
 
 instance MonadWriter w m => MonadWriter w (FailT m) where
     tell = lift . tell
@@ -316,7 +316,7 @@ failToMaybe _ = Nothing
 
 failForIOException :: IO a -> IO (Fail a)
 failForIOException action =
-    catch (liftM Ok action) (\(exc::IOException) -> return (Fail (show exc)))
+    catch (Ok <$> action) (\(exc::IOException) -> return (Fail (show exc)))
 
 catFails :: [Fail a] -> [a]
 catFails [] = []
@@ -351,7 +351,7 @@ eitherToError :: MonadError e m => Either e a -> m a
 eitherToError = either throwError return
 
 errorToEither :: MonadError e m => m a -> m (Either e a)
-errorToEither m = catchError (liftM Right m) (return . Left)
+errorToEither m = catchError (Right <$> m) (return . Left)
 
 errorToDefault :: MonadError e m => a -> m a -> m a
 errorToDefault a ma = catchError ma (\_ -> return a)
@@ -360,7 +360,7 @@ liftError :: (MonadError e m, MonadError e m1) => (forall a. m a -> m1 a) -> m a
 liftError liftBase action = liftBase (errorToEither action) >>= eitherToError
 
 errorToMaybe :: MonadError e m => m a -> m (Maybe a)
-errorToMaybe ma = catchError (liftM Just ma) (\_ -> return Nothing)
+errorToMaybe ma = catchError (Just <$> ma) (\_ -> return Nothing)
 
 maybeToError :: MonadError e m => String -> Maybe a -> m a
 maybeToError msg ma =

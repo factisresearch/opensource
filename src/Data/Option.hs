@@ -73,7 +73,7 @@ class ToOptionT t where
     optionT :: Monad m => m (t a) -> OptionT m a
 
 instance ToOptionT Maybe where
-    optionT = OptionT . liftM maybeToOption
+    optionT = OptionT . fmap maybeToOption
 
 instance ToOptionT Option where
     optionT = OptionT
@@ -110,7 +110,7 @@ instance NFData a => NFData (Option a) where
     rnf (Some b) = rnf b
 
 instance MonadTrans OptionT where
-    lift x = OptionT (liftM Some x)
+    lift x = OptionT (Some <$> x)
 
 instance (MonadIO m) => MonadIO (OptionT m) where
     liftIO = lift . liftIO
@@ -119,7 +119,7 @@ instance Fail.MonadFail Option where
     fail _ = None
 
 instance Arbitrary a => Arbitrary (Option a) where
-    arbitrary = frequency [(1, return None), (3, liftM Some arbitrary)]
+    arbitrary = frequency [(1, return None), (3, Some <$> arbitrary)]
 
     shrink (Some x) = None : [ Some x' | x' <- shrink x ]
     shrink _        = []
@@ -188,7 +188,7 @@ mapOption f (x:xs) =
 instance Hashable a => Hashable (Option a)
 
 forOptionM :: Monad m => [a] -> (a -> OptionT m b) -> m [b]
-forOptionM xs f = liftM catOptions (forM xs (runOptionT . f))
+forOptionM xs f = catOptions <$> forM xs (runOptionT . f)
 
 mapOptionM :: Monad m => (a -> OptionT m b) -> [a] -> m [b]
 mapOptionM = flip forOptionM
