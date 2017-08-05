@@ -39,6 +39,7 @@ test-suite util-plus-test
   build-depends:       base >= 4.7 && < 5
                      , HTF
                      , QuickCheck
+                     , containers
                      , util-plus
   ghc-options:       -Wall
 
