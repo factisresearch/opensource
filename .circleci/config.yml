@@ -1,7 +1,7 @@
 version: 2
 jobs:
   build:
-    working_directory: ~/strict-data
+    working_directory: ~/opensource-mono
     docker:
       - image: fpco/stack-build:lts-8.20
     steps:
@@ -18,7 +18,7 @@ jobs:
           key: stack-cache
           paths:
             - ~/.stack
-            - ~/strict-data/.stack-work
+            - ~/opensource-mono/.stack-work
       - run:
           name: stack build
           command: 'stack build --fast --pedantic'
@@ -26,7 +26,7 @@ jobs:
           name: stack test
           command: 'stack test --fast'
   build-nightly:
-    working_directory: ~/strict-data2
+    working_directory: ~/opensource-mono2
     docker:
       - image: fpco/stack-build:lts-8.20
     steps:
@@ -43,7 +43,7 @@ jobs:
           key: stack-cache-nightly
           paths:
             - ~/.stack
-            - ~/strict-data2/.stack-work
+            - ~/opensource-mono2/.stack-work
       - run:
           name: stack build
           command: 'stack --resolver nightly build --fast --pedantic'
