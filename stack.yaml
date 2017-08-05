@@ -1,3 +1,4 @@
 resolver: lts-9.0
 packages:
   - strict-data
+  - util-plus

@@ -1,0 +1,41 @@
+name:                util-plus
+version:             0.1.0.0
+synopsis:            A collection of commonly used utils
+description:         A collection of commonly used util functions for basic libaries
+homepage:            https://github.com/factisresearch/opensource-mono#readme
+license:             BSD3
+license-file:        LICENSE
+author:              factis research GmbH
+maintainer:          mail@athiemann.net
+copyright:           2017 factis research GmbH
+category:            Data
+build-type:          Simple
+extra-source-files:
+    README.md
+cabal-version:       >=1.10
+
+library
+  hs-source-dirs:      src
+  exposed-modules:     GHC.Stack.Plus
+                     , Safe.Plus
+  build-depends:       base >= 4.7 && < 5
+                     , strict-data
+                     , safe
+                     , array
+  default-language:    Haskell2010
+  ghc-options:       -Wall
+
+test-suite util-plus-test
+  type:                exitcode-stdio-1.0
+  hs-source-dirs:      test
+  main-is:             Spec.hs
+  other-modules:       GHC.Stack.PlusSpec
+                     , Safe.PlusSpec
+  build-depends:       base >= 4.7 && < 5
+                     , HTF
+                     , util-plus
+  ghc-options:       -Wall
+
+source-repository head
+  type:     git
+  location: https://github.com/factisresearch/opensource-mono
