@@ -5,6 +5,7 @@
 {-# LANGUAGE DeriveTraversable #-}
 module Data.Option where
 
+import Data.Fail
 import Data.StrictList.Types
 
 import Control.Applicative
@@ -195,11 +196,10 @@ mapOptionM = flip forOptionM
 fromSome :: Option a -> a
 fromSome = fromOption (error "fromSome None")
 
--- optionToFail :: String -> Option a -> Fail a
--- optionToFail _ (Some x) = Ok x
--- optionToFail err None = Fail err
+optionToFail :: String -> Option a -> Fail a
+optionToFail _ (Some x) = Ok x
+optionToFail err None = Fail err
 
--- optionToFailT :: Monad m => String -> Option a -> FailT m a
--- optionToFailT _ (Some x) = return x
--- optionToFailT err None = safeFail err
-
+optionToFailT :: Monad m => String -> Option a -> FailT m a
+optionToFailT _ (Some x) = return x
+optionToFailT err None = fail err
