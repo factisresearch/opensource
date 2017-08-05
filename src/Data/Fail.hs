@@ -1,12 +1,12 @@
-{-# OPTIONS_GHC -fno-warn-name-shadowing #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE PatternSynonyms #-}
 {-# LANGUAGE Rank2Types #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE TypeSynonymInstances #-}
 {-# LANGUAGE UndecidableInstances #-}
-{-# OPTIONS_GHC -fno-warn-orphans #-}
+{-# OPTIONS_GHC -fno-warn-name-shadowing -fno-warn-orphans #-}
 module Data.Fail
     ( Fail(..), isFail, isOk
     , FailT(FailT), runFailT, FIO
@@ -20,6 +20,7 @@ module Data.Fail
     , runExceptTorFail, maybeToFail, eitherToFail
     , fromFailString, partitionFails
     , Control.Monad.Fail.MonadFail
+    , pattern Fail
 ) where
 
 
