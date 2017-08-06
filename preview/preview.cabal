@@ -1,7 +1,7 @@
 name:                preview
 version:             0.1.0.0
-synopsis:
-description:
+synopsis:            The method of previewing data (instead of wholly show-ing it)
+description:         The method of previewing data (instead of wholly show-ing it)
 homepage:            https://github.com/factisresearch/opensource-mono#readme
 license:             BSD3
 license-file:        LICENSE
