@@ -19,7 +19,6 @@ where
 
 
 import Control.DeepSeq (NFData(..))
-import Control.Monad (liftM)
 import Data.Data
 import Data.Hashable (Hashable(..))
 import Data.Maybe (isJust)
@@ -50,7 +49,7 @@ instance (NFData k, NFData v) => NFData (USMap k v) where
     rnf (USMap x) = rnf x
 
 instance (Hashable k, Eq k, Arbitrary k, Arbitrary v) => Arbitrary (USMap k v) where
-    arbitrary = liftM fromList arbitrary
+    arbitrary = fromList <$> arbitrary
 
 toHashMap :: USMap k v -> HM.HashMap k v
 toHashMap = unUSMap

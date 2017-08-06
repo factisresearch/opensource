@@ -27,29 +27,35 @@ module Data.Fail
 
 import Data.Fail.Types
 
-import Control.Monad.Base (MonadBase (..), liftBaseDefault)
-import Control.Monad.Catch (MonadThrow (..))
-import Control.Monad.Fail (MonadFail)
-import Control.Monad.Trans.Control
-    ( MonadBaseControl (..), defaultLiftBaseWith, defaultRestoreM, ComposeSt
-    , MonadTransControl (..) )
 import Control.Applicative (Alternative(..))
 import Control.Exception (ErrorCall(..), IOException, catch)
 import Control.Monad (MonadPlus(..))
+import Control.Monad.Base (MonadBase (..), liftBaseDefault)
+import Control.Monad.Catch (MonadThrow (..))
 import Control.Monad.Except (ExceptT, runExceptT, MonadError(..))
+import Control.Monad.Fail (MonadFail)
 import Control.Monad.Fix
 import Control.Monad.IO.Class
 import Control.Monad.Identity (runIdentity)
 import Control.Monad.Reader (ReaderT(..))
 import Control.Monad.State (MonadState(..))
 import Control.Monad.Trans (MonadTrans(..))
+import Control.Monad.Trans.Control
 import Control.Monad.Trans.Resource (MonadResource (..))
 import Control.Monad.Writer (MonadWriter(..))
 import GHC.Stack
 import GHC.Stack.Plus
 import Safe.Plus
+import Test.QuickCheck
 import qualified Control.Monad.Fail
 import qualified Data.Text as T
+
+instance Arbitrary a => Arbitrary (Fail a) where
+    arbitrary =
+        oneof
+        [ Ok <$> arbitrary
+        , Fail <$> arbitrary
+        ]
 
 instance MonadThrow m => MonadThrow (FailT m) where
     throwM = FailT . throwM

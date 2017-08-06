@@ -122,6 +122,13 @@ instance Preview a => Preview (Option a) where
 instance Preview a => Preview (StrictList a) where
     previewsPrec x y = previewList x (toLazyList y)
 
+instance Ppr a => Ppr (StrictList a) where
+    ppr = pprMany
+
+instance Ppr a => Ppr (Option a) where
+    ppr None = P.text "None"
+    ppr (Some a) = ppr a
+
 instance (Preview a, Preview b) => Preview (Choice a b) where
     previewsPrec p choice =
         case choice of

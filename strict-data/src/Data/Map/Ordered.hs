@@ -28,11 +28,13 @@ where
 
 import Control.Arrow (second)
 import Control.DeepSeq (NFData(..))
+import Data.Coerce
 import Data.Data
 import Data.Hashable
 import Data.List (foldl')
 import Data.Maybe (isJust)
 import Prelude hiding (map, lookup, null, filter)
+import Test.QuickCheck
 import qualified Data.Map.Strict as DM
 import qualified Data.Set as Set
 
@@ -49,6 +51,10 @@ instance (Hashable k, Hashable v) => Hashable (OSMap k v) where
 instance Functor (OSMap k) where
     {-# INLINE fmap #-}
     fmap = map
+
+instance (Ord k, Arbitrary k, Arbitrary v) => Arbitrary (OSMap k v) where
+    arbitrary = OSMap <$> arbitrary
+    shrink = coerce . shrink . unOSMap
 
 instance Traversable (OSMap k) where
     {-# INLINE traverse #-}

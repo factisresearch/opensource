@@ -196,8 +196,8 @@ forOptionM xs f = catOptions <$> forM xs (runOptionT . f)
 mapOptionM :: Monad m => (a -> OptionT m b) -> [a] -> m [b]
 mapOptionM = flip forOptionM
 
-fromSome :: Option a -> a
-fromSome = fromOption (safeError "fromSome None")
+safeFromSome :: Option a -> a
+safeFromSome = fromOption (safeError "fromSome is None!")
 
 failToOption :: Fail a -> Option a
 failToOption (Ok x) = Some x
