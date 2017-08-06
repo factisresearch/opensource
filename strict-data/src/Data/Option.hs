@@ -13,8 +13,8 @@ import Control.DeepSeq
 import Control.Monad
 import Control.Monad.Trans
 import Data.Aeson
+import Data.Data
 import Data.Hashable
-import Data.Typeable
 import GHC.Generics (Generic)
 import Safe.Plus
 import Test.QuickCheck
@@ -23,7 +23,7 @@ import qualified Control.Monad.Fail as Fail
 data Option a
    = None
    | Some !a
-   deriving (Show, Read, Eq, Generic, Typeable, Functor, Foldable, Traversable)
+   deriving (Show, Read, Eq, Generic, Typeable, Data, Functor, Foldable, Traversable)
 
 instance Applicative Option where
     pure = Some
