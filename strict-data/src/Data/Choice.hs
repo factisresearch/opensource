@@ -5,6 +5,7 @@ import Control.DeepSeq (NFData(..))
 import Data.Bifunctor
 import Data.Data
 import Data.Hashable
+import Safe.Plus
 import Test.QuickCheck
 
 -- | 'Choice' is a version of 'Either' that is strict on both the 'Left' side (called 'This')
@@ -28,7 +29,7 @@ choice fa fb = mergeChoice . bimap fa fb
 -- Nothing
 this :: Monad m => Choice a b -> m a
 this (This a) = return a
-this _ = fail "This is a that"
+this _ = safeFail "This is a that"
 
 -- |
 -- >>> that (This "foo") :: Maybe String
@@ -38,7 +39,7 @@ this _ = fail "This is a that"
 -- Just "bar"
 that :: Monad m => Choice a b -> m b
 that (That a) = return a
-that _ = fail "That is a this"
+that _ = safeFail "That is a this"
 
 -- |
 -- >>> these [This "foo", This "bar", That "baz", This "quux"]
@@ -109,4 +110,3 @@ instance (Arbitrary a, Arbitrary b) => Arbitrary (Choice a b) where
 instance (NFData a, NFData b) => NFData (Choice a b) where
     rnf (This x)  = rnf x
     rnf (That y) = rnf y
-

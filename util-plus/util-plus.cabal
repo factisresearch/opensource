@@ -20,7 +20,6 @@ library
                      , Safe.Plus
                      , Data.List.Plus
   build-depends:       base >= 4.7 && < 5
-                     , strict-data
                      , safe
                      , array
                      , hashable

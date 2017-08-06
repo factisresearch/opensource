@@ -20,6 +20,7 @@ module Data.Fail
     , eitherToError, errorToEither, liftError, errorToDefault, errorToMaybe, maybeToError, runError
     , runExceptTorFail, maybeToFail, eitherToFail
     , fromFailString, partitionFails
+    , safeFromOk
     , Control.Monad.Fail.MonadFail
 ) where
 
@@ -44,6 +45,9 @@ import Control.Monad.State (MonadState(..))
 import Control.Monad.Trans (MonadTrans(..))
 import Control.Monad.Trans.Resource (MonadResource (..))
 import Control.Monad.Writer (MonadWriter(..))
+import GHC.Stack
+import GHC.Stack.Plus
+import Safe.Plus
 import qualified Control.Monad.Fail
 import qualified Data.Text as T
 
@@ -147,14 +151,14 @@ instance MonadFix Fail where
     mfix f = let a = f (unOk a) in a
         where
           unOk (Ok x) = x
-          unOk (Err msg) = error ("mfix failed: " ++ T.unpack msg)
+          unOk (Err msg) = safeError ("mfix failed: " ++ T.unpack msg)
 
 instance MonadFix m => MonadFix (FailT m) where
     mfix f =
         FailT $ mfix $ \a -> runFailT $ f $
         case a of
           Ok r -> r
-          Err msg -> error ("FailT.mfix failed: " ++ T.unpack msg)
+          Err msg -> safeError ("FailT.mfix failed: " ++ T.unpack msg)
 
 instance Monad m => Monad (FailT m) where
     return = returnFailT
@@ -366,19 +370,25 @@ errorToMaybe ma = catchError (Just <$> ma) (\_ -> return Nothing)
 maybeToError :: MonadError e m => String -> Maybe a -> m a
 maybeToError msg ma =
     case ma of
-      Nothing -> fail msg
+      Nothing -> safeFail msg
       Just a -> return a
 
 maybeToFail :: Monad m => String -> Maybe a -> m a
 maybeToFail msg ma =
     case ma of
-         Nothing -> fail msg
+         Nothing -> safeFail msg
          Just a -> return a
 
 eitherToFail :: Monad m => Either String a -> m a
-eitherToFail = either fail return
+eitherToFail = either safeFail return
 
 runExceptTorFail :: (Monad m, Show e) => ExceptT e m a -> m a
 runExceptTorFail action =
     do result <- runExceptT action
-       either (fail . show) return result
+       either (safeFail . show) return result
+
+safeFromOk :: (HasCallStack) => Fail a -> a
+safeFromOk f =
+    case f of
+      Ok x -> x
+      Err msg -> safeError $ callerLocation ++ ": Fail " ++ show msg

@@ -126,6 +126,7 @@ import Prelude hiding
     , zip
     , zipWith
     )
+import Safe.Plus
 import qualified Data.Foldable as F
 import qualified Data.HashSet as HashSet
 import qualified Data.List as L
@@ -158,7 +159,7 @@ headOpt (x :! _) = Some x
 headM :: Monad m => StrictList a -> m a
 headM xxs =
     case xxs of
-      Nil -> fail "headM of empty strict list."
+      Nil -> safeFail "headM of empty strict list."
       (x :! _) -> return x
 
 -- | Safe 'Prelude.tail' function: Returns 'None' for an empty list,
@@ -173,7 +174,7 @@ lastOpt = lastM
 lastM :: Monad m => StrictList a -> m a
 lastM xxs =
     case xxs of
-      Nil -> fail "No last element in strict list."
+      Nil -> safeFail "No last element in strict list."
       (x :! Nil) -> return x
       (_ :! xs) -> lastM xs
 
@@ -515,7 +516,7 @@ lookupM'' showKey getKey wantedK list = loop list
                 let keys = ll $ mapMaybe getKey list
                     keyCount = P.length keys
                     count = P.length list
-                in fail $
+                in safeFail $
                    "Didn't find " ++ showKey wantedK ++ " in the list with these keys ["
                    ++ L.intercalate ", " (fmap showKey keys) ++ "]. " ++
                    if keyCount == count
@@ -560,7 +561,7 @@ dropWhileEnd p =
 maximumM :: (Ord a, Monad m) => SL a -> m a
 maximumM xxs =
     case xxs of
-      Nil -> fail "Empty list doesn't have a maximum."
+      Nil -> safeFail "Empty list doesn't have a maximum."
       (x :! xs) -> return $! loop x xs
     where
       loop x yys =

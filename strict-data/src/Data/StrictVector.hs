@@ -47,6 +47,7 @@ import Data.Vector.Generic hiding
     , imapM, generate, generateM, unfoldrNM, unfoldrM, mapMaybe)
 import Prelude hiding
     ( map, drop, dropWhile, concatMap, length, zip3, mapM, null, (++), replicate, head, last)
+import Safe.Plus
 import Test.QuickCheck (Arbitrary(..))
 import Text.Read
 import qualified Control.Applicative as A
@@ -68,7 +69,7 @@ instance VG.Vector Vector a where
     basicUnsafeThaw (Vector v) = fmap VM.MVector (basicUnsafeThaw v)
     basicLength (Vector v) = basicLength v
     basicUnsafeSlice n m (Vector v) = Vector (basicUnsafeSlice n m v)
-    basicUnsafeIndexM (Vector v) n = basicUnsafeIndexM v n
+    basicUnsafeIndexM (Vector v) = basicUnsafeIndexM v
     basicUnsafeCopy (VM.MVector v1) (Vector v2) = basicUnsafeCopy v1 v2
     elemseq _ = seq
 
@@ -99,7 +100,7 @@ instance Monad Vector where
     {-# INLINE (>>=) #-}
     (>>=) = flip VG.concatMap
     {-# INLINE fail #-}
-    fail = Control.Monad.Fail.fail
+    fail = safeFail
 
 instance MonadPlus Vector where
     {-# INLINE mzero #-}

@@ -19,7 +19,6 @@ module Safe.Plus
     , fromRightNote
     , safeFromLeft
     , fromLeftNote
-    , safeFromOk
     , safeAtArray
     , atArrayNote
     , safeAt
@@ -31,7 +30,6 @@ where
 
 import Data.Array.IArray
 import Data.Char
-import Data.Fail
 import Data.Monoid
 import GHC.Stack
 import GHC.Stack.Plus
@@ -107,12 +105,6 @@ safeFromLeft = fromLeftNote callerLocation
 fromLeftNote :: String -> Either a b -> a
 fromLeftNote msg (Right _) = safeError $ "fromLeft got a right value: " ++ msg
 fromLeftNote _ (Left x) = x
-
-safeFromOk :: (HasCallStack) => Fail a -> a
-safeFromOk f =
-    case f of
-      Ok x -> x
-      Err msg -> error $ callerLocation ++ ": Fail " ++ show msg
 
 safeAtArray :: (HasCallStack, IArray a e, Ix i, Show i) => a i e -> i -> e
 safeAtArray = atArrayNote callerLocation

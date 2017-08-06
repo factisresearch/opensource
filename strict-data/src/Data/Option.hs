@@ -16,6 +16,7 @@ import Data.Aeson
 import Data.Hashable
 import Data.Typeable
 import GHC.Generics (Generic)
+import Safe.Plus
 import Test.QuickCheck
 import qualified Control.Monad.Fail as Fail
 
@@ -89,7 +90,7 @@ instance Monad m => Fail.MonadFail (OptionT m) where
     fail _ = OptionT (return None)
 
 instance Monad m => Monad (OptionT m) where
-    fail = Fail.fail
+    fail = safeFail
     return = lift . return
     x >>= f = OptionT (runOptionT x >>= option (return None) (runOptionT . f))
 
@@ -166,7 +167,7 @@ listToOption [] = None
 listToOption (x:_) = Some x
 
 getSomeNote :: Monad m => String -> Option a -> m a
-getSomeNote str = option (fail str) return
+getSomeNote str = option (safeFail str) return
 
 option :: b -> (a -> b) -> Option a -> b
 option def f opt =
@@ -194,7 +195,7 @@ mapOptionM :: Monad m => (a -> OptionT m b) -> [a] -> m [b]
 mapOptionM = flip forOptionM
 
 fromSome :: Option a -> a
-fromSome = fromOption (error "fromSome None")
+fromSome = fromOption (safeError "fromSome None")
 
 optionToFail :: String -> Option a -> Fail a
 optionToFail _ (Some x) = Ok x
@@ -202,4 +203,4 @@ optionToFail err None = Fail err
 
 optionToFailT :: Monad m => String -> Option a -> FailT m a
 optionToFailT _ (Some x) = return x
-optionToFailT err None = fail err
+optionToFailT err None = safeFail err
