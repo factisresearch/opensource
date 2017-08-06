@@ -199,6 +199,10 @@ mapOptionM = flip forOptionM
 fromSome :: Option a -> a
 fromSome = fromOption (safeError "fromSome None")
 
+failToOption :: Fail a -> Option a
+failToOption (Ok x) = Some x
+failToOption _ = None
+
 optionToFail :: String -> Option a -> Fail a
 optionToFail _ (Some x) = Ok x
 optionToFail err None = Fail err
