@@ -15,6 +15,7 @@ import Data.List.Plus
 import Data.Option (Option(..))
 import Data.StrictList (StrictList, toLazyList)
 import Data.StrictTuple (Pair(..))
+import qualified Data.Map.Ordered as OM
 
 import Data.Int (Int32, Int64)
 import Data.Map (Map)
@@ -124,6 +125,9 @@ instance (Preview a, Preview b) => Preview (Choice a b) where
           This a -> previewsPrec p a
           That b -> previewsPrec p b
 
+instance (Preview k, Preview v) => Preview (OM.OSMap k v) where
+    previewsPrec p x = previewsPrec p (OM.toDataMap x)
+
 previewsPrecMapping :: (Preview k, Preview v) => t -> [(k, v)] -> String -> String
 previewsPrecMapping _ =
         (showString "{ " .) .
@@ -199,6 +203,9 @@ instance Ppr a => Ppr (Maybe a) where
 
 instance Ppr Word64 where
     ppr = docFromStr . show
+
+instance (Ppr k, Ppr v) => Ppr (OM.OSMap k v) where
+    ppr = pprMapping . OM.toList
 
 pretty :: Ppr a => a -> String
 pretty = P.renderStyle (P.style { P.mode = P.LeftMode }) . ppr
@@ -291,5 +298,3 @@ shortPreviewStr n s =
 
 angles :: Doc -> Doc
 angles p = P.char '<' <> p <> P.char '>'
-
-

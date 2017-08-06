@@ -25,6 +25,7 @@ library
                      , Data.StrictTuple
                      , Data.StrictVector
                      , Data.StrictVector.Mutable
+                     , Data.Map.Ordered
   other-modules:       Data.Fail.Types
                      , Data.StrictList.Types
   build-depends:       base >= 4.7 && < 5
@@ -42,6 +43,7 @@ library
                      , text
                      , transformers
                      , transformers-base
+                     , containers >= 0.5
                      , unordered-containers
                      , util-plus
                      , vector
@@ -58,10 +60,14 @@ test-suite strict-data-test
                      , StrictList
                      , StrictVector
                      , StrictVector.Mutable
+                     , Data.Map.OrderedSpec
   build-depends:       base >= 4.7 && < 5
                      , strict-data
                      , HTF
                      , vector
+                     , deepseq
+                     , hashable
+                     , containers
   ghc-options:       -Wall
 
 test-suite strict-data-doctest

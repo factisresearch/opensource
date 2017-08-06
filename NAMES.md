@@ -10,3 +10,4 @@
 - Cpm.Util.StrictList -> Data.StrictList
 - Cpm.Util.Tuple -> Data.StrictTuple
 - Cpm.Util.Vector -> Data.StrictVector
+- Cpm.Util.OSMap -> Data.Map.Ordered
