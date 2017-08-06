@@ -10,7 +10,7 @@ module Data.Preview
 where
 
 import Data.Choice (Choice(..))
-import Data.Fail (Fail(..), pattern Fail)
+import Data.Fail (Fail(..))
 import Data.List.Plus
 import Data.Option (Option(..))
 import Data.StrictList (StrictList, toLazyList)
@@ -103,7 +103,7 @@ instance (Preview k, Preview v) => Preview (Map k v) where
 instance Preview a => Preview (Fail a) where
     previewsPrec p x =
         case x of
-          Fail msg -> showParen (p > 10) $ showString "Fail " . showsPrec 5 msg
+          Err msg -> showParen (p > 10) $ showString "Fail " . showsPrec 5 msg
           Ok a -> previewsPrec p a
 
 instance (Preview a, Preview b) => Preview (Pair a b) where
@@ -112,7 +112,7 @@ instance (Preview a, Preview b) => Preview (Pair a b) where
 instance Preview a => Preview (Option a) where
     previewsPrec prec mA s =
         case mA of
-          None -> showsPrec prec "None" s
+          None -> showsPrec prec ("None"::String) s
           Some a -> previewsPrec prec a s
 
 instance Preview a => Preview (StrictList a) where
@@ -167,7 +167,7 @@ instance Ppr Doc where
 
 instance Ppr a => Ppr (Fail a) where
     ppr (Ok x) = "Ok" <+> ppr x
-    ppr (Fail msg) = "Fail" <+> docFromStr (show msg)
+    ppr (Err msg) = "Fail" <+> docFromStr (show msg)
 
 pprMapping :: (Ppr a, Ppr b) => [(a, b)] -> Doc
 pprMapping xs =
