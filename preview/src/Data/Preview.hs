@@ -1,3 +1,4 @@
+
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE PatternSynonyms #-}
 module Data.Preview
@@ -9,7 +10,8 @@ module Data.Preview
     )
 where
 
-import Data.Choice (Choice(..))
+import Data.Bifunctor
+import Data.Choice (Choice(..), mergeChoice)
 import Data.Fail (Fail(..))
 import Data.List.Plus
 import Data.Option (Option(..))
@@ -210,6 +212,9 @@ instance (Ppr k, Ppr v) => Ppr (OM.OSMap k v) where
 
 instance (Ppr k, Ppr v) => Ppr (UM.USMap k v) where
     ppr = pprMapping . UM.toList
+
+instance (Ppr a, Ppr b) => Ppr (Choice a b) where
+    ppr = mergeChoice . bimap ppr ppr
 
 pretty :: Ppr a => a -> String
 pretty = P.renderStyle (P.style { P.mode = P.LeftMode }) . ppr
