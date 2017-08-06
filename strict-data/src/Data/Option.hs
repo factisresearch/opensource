@@ -149,6 +149,8 @@ optionToMaybe (Some a) = Just a
 optionToMaybe None = Nothing
 {-# INLINE optionToMaybe #-}
 
+-- |
+-- prop> maybeToOption (optionToMaybe x) == x
 maybeToOption :: Maybe a -> Option a
 maybeToOption (Just a) = Some a
 maybeToOption Nothing = None

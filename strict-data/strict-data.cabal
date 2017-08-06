@@ -70,7 +70,6 @@ test-suite strict-data-doctest
   main-is:             Doc.hs
   build-depends:       base >= 4.7 && < 5
                      , doctest
-                     , filemanip
 
 source-repository head
   type:     git
