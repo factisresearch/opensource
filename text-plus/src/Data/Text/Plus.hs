@@ -71,8 +71,8 @@ fixed' ch i s =
     in T.replicate n (T.singleton ch) `T.append` s
 
 instance Arbitrary T.Text where
-    arbitrary = arbitrary >>= return . T.pack
-    shrink t = fmap T.pack $ shrink (T.unpack t)
+    arbitrary = T.pack <$> arbitrary
+    shrink t = T.pack <$> shrink (T.unpack t)
 
 fromLazy :: TL.Text -> T.Text
 fromLazy = TL.toStrict
@@ -100,7 +100,7 @@ limitTo lim t
 
 groupOn :: Eq a => (Char -> a) -> Text -> [(a, T.Text)]
 groupOn _ "" = []
-groupOn proj t = (x', (x `T.cons` ys)) : groupOn proj zs
+groupOn proj t = (x', x `T.cons` ys) : groupOn proj zs
     where
       x = T.head t
       xs = T.tail t
@@ -149,10 +149,10 @@ indicesOfOccurences :: T.Text -> T.Text -> [Int]
 indicesOfOccurences needle = go 0
     where
       go off haystack
-          | Just (_, matchTail) <- T.uncons match = newOff:(go (newOff+1) matchTail)
+          | Just (_, matchTail) <- T.uncons match = newOff:go (newOff+1) matchTail
           | otherwise = []
           where
-            newOff = off + (T.length prefix)
+            newOff = off + T.length prefix
             (prefix, match) = T.breakOn needle haystack
 
 -- | Simple tokenizer - that doesn't destroy delimiters, e.g.
@@ -275,14 +275,13 @@ firstParagraph :: T.Text -> T.Text
 firstParagraph =
     T.unlines . Prelude.takeWhile (not . endOfParagraph) . T.lines
     where
-      endOfParagraph t = T.all isSpace t
+      endOfParagraph = T.all isSpace
 
 firstLine :: T.Text -> T.Text
 firstLine = T.takeWhile (/='\n')
 
 escapeXml :: T.Text -> T.Text
-escapeXml t =
-    T.concatMap escape t
+escapeXml = T.concatMap escape
     where
       escape c =
           case c of
