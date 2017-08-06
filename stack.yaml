@@ -1,4 +1,5 @@
 resolver: lts-9.0
 packages:
+  - preview
   - strict-data
   - util-plus
