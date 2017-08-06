@@ -1,7 +1,7 @@
 name:                text-plus
 version:             0.1.0.1
--- synopsis:
--- description:
+synopsis:            Utils for text
+description:         Utils for text
 homepage:            https://github.com/factisresearch/opensource-mono#readme
 license:             BSD3
 license-file:        LICENSE
