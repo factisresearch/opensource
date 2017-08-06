@@ -19,6 +19,7 @@ library
   exposed-modules:     GHC.Stack.Plus
                      , Safe.Plus
                      , Data.List.Plus
+                     , Control.Applicative.Plus
   build-depends:       base >= 4.7 && < 5
                      , safe
                      , array
