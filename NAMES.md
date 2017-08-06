@@ -11,3 +11,4 @@
 - Cpm.Util.Tuple -> Data.StrictTuple
 - Cpm.Util.Vector -> Data.StrictVector
 - Cpm.Util.OSMap -> Data.Map.Ordered
+- Cpm.Util.USMap -> Data.Map.Unordered

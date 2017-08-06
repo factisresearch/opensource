@@ -16,6 +16,7 @@ import Data.Option (Option(..))
 import Data.StrictList (StrictList, toLazyList)
 import Data.StrictTuple (Pair(..))
 import qualified Data.Map.Ordered as OM
+import qualified Data.Map.Unordered as UM
 
 import Data.Int (Int32, Int64)
 import Data.Map (Map)
@@ -206,6 +207,9 @@ instance Ppr Word64 where
 
 instance (Ppr k, Ppr v) => Ppr (OM.OSMap k v) where
     ppr = pprMapping . OM.toList
+
+instance (Ppr k, Ppr v) => Ppr (UM.USMap k v) where
+    ppr = pprMapping . UM.toList
 
 pretty :: Ppr a => a -> String
 pretty = P.renderStyle (P.style { P.mode = P.LeftMode }) . ppr

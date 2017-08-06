@@ -26,6 +26,7 @@ library
                      , Data.StrictVector
                      , Data.StrictVector.Mutable
                      , Data.Map.Ordered
+                     , Data.Map.Unordered
   other-modules:       Data.Fail.Types
                      , Data.StrictList.Types
   build-depends:       base >= 4.7 && < 5
