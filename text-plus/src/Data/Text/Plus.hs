@@ -118,7 +118,7 @@ firstToUpper t =
 withoutTags :: T.Text -> T.Text
 withoutTags =
     let betweenTags ('<':xs) = inTag xs
-        betweenTags (x:xs) = x:(betweenTags xs)
+        betweenTags (x:xs) = x:betweenTags xs
         betweenTags [] = []
         inTag ('>':xs) = betweenTags xs
         inTag ('\'':xs) = inSingQuot xs
@@ -134,17 +134,17 @@ withoutTags =
     in T.pack . betweenTags . T.unpack
 
 -- indicesOfOccurences needle haystack returns all indices i s.t.
--- @
---    needle `T.isPrefixOf` (T.drop i haystack)
--- @
+--
+-- prop> needle `T.isPrefixOf` (T.drop i haystack)
+--
 -- Note that: T.breakOnAll - does not return overlapping matches, e.g.
--- @
---    indicesOfOccurences "edited" "editedited" == [0,4]
--- @
+--
+-- prop> indicesOfOccurences "edited" "editedited" == [0,4]
+--
 -- but
--- @
---    map (T.length . fst) (T.breakOnAll "edited" "editedited") == [0]
--- @
+--
+-- prop> map (T.length . fst) (T.breakOnAll "edited" "editedited") == [0]
+--
 indicesOfOccurences :: T.Text -> T.Text -> [Int]
 indicesOfOccurences needle = go 0
     where
@@ -157,10 +157,11 @@ indicesOfOccurences needle = go 0
 
 -- | Simple tokenizer - that doesn't destroy delimiters, e.g.
 --
--- tokenize "This is blind-text, with punctation." ==
--- ["This"," ","is"," ","blind","-","text",", ","with", " ", "punctuation", "."]
+-- >>> tokenize (T.pack "This is blind-text, with punctuation.")
+-- ["This"," ","is"," ","blind","-","text",", ","with"," ","punctuation","."]
 --
--- Note: For all x it is true that - T.concat (tokenize x) == x
+-- prop> T.concat (tokenize x) == x
+--
 -- Note: URLs, numbers won't be handled very well.
 tokenize :: T.Text -> [T.Text]
 tokenize = T.groupBy ((==) `on` C.isAlphaNum)

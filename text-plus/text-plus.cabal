@@ -33,6 +33,7 @@ test-suite text-plus-test
   other-modules:       Data.Text.PlusSpec
   build-depends:       base
                      , HTF
+                     , doctest
                      , text
                      , text-plus
   ghc-options:         -threaded -rtsopts -with-rtsopts=-N
