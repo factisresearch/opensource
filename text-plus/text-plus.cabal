@@ -1,5 +1,5 @@
 name:                text-plus
-version:             0.1.0.0
+version:             0.1.0.1
 -- synopsis:
 -- description:
 homepage:            https://github.com/factisresearch/opensource-mono#readme
@@ -20,7 +20,6 @@ library
                      , QuickCheck
                      , bytestring
                      , pretty
-                     , preview
                      , strict-data
                      , text
                      , util-plus

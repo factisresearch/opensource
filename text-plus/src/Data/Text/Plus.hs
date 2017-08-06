@@ -39,7 +39,6 @@ where
 
 import Data.Fail
 import Data.Option
-import Data.Preview
 import Safe.Plus
 
 import Data.Char (isSpace)
@@ -57,10 +56,6 @@ import qualified Data.Text as T
 import qualified Data.Text.Encoding.Error as TE
 import qualified Data.Text.Lazy as TL
 import qualified Data.Text.Lazy.Encoding as TLE
-import qualified Text.PrettyPrint.HughesPJ as P
-
-instance Ppr T.Text where
-    ppr = P.text . T.unpack
 
 fixed :: Int -> T.Text -> T.Text
 fixed = fixed' '0'

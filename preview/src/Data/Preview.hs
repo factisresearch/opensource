@@ -60,6 +60,9 @@ instance Preview Bool where previewsPrec = showsPrec
 instance Preview a => Preview [a] where previewsPrec = previewList
 instance Preview T.Text where  previewsPrec = previewsText
 
+instance Ppr T.Text where
+    ppr = P.text . T.unpack
+
 instance (Preview a, Preview b) => Preview (Either a b) where
     previewsPrec prec eAB s =
         case eAB of
@@ -112,6 +115,9 @@ instance Preview a => Preview (Fail a) where
 
 instance (Preview a, Preview b) => Preview (Pair a b) where
     previewsPrec p (x :!: y) = previewsPrec p (x, y)
+
+instance (Ppr a, Ppr b) => Ppr (Pair a b) where
+    ppr (a :!: b) = P.parens ((ppr a <> P.semi) P.<+> ppr b)
 
 instance Preview a => Preview (Option a) where
     previewsPrec prec mA s =
