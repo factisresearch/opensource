@@ -139,10 +139,18 @@ sl = fromLazyList
 ll :: SL a -> [a]
 ll = toLazyList
 
+-- |
+-- >>> null (sl [])
+-- True
+--
+-- >>> null (sl ["foo"])
+-- False
 null :: StrictList a -> Bool
 null Nil = True
 null _ = False
 
+-- |
+-- prop> not (null xs) ==> isSome (headOpt xs)
 headOpt :: StrictList a -> Option a
 headOpt Nil = None
 headOpt (x :! _) = Some x
@@ -153,6 +161,8 @@ headM xxs =
       Nil -> fail "headM of empty strict list."
       (x :! _) -> return x
 
+-- | Safe 'Prelude.tail' function: Returns 'None' for an empty list,
+-- 'Some' @x@ for a non-empty list starting with @x@.
 tailOpt :: StrictList a -> Option (StrictList a)
 tailOpt Nil = None
 tailOpt (_ :! xs) = Some xs
@@ -167,10 +177,22 @@ lastM xxs =
       (x :! Nil) -> return x
       (_ :! xs) -> lastM xs
 
+-- |
+-- >>> optionToStrictList (Some "foo")
+-- ["foo"]
+--
+-- >>> optionToStrictList None
+-- []
 optionToStrictList :: Option a -> StrictList a
 optionToStrictList None = Nil
 optionToStrictList (Some x) = x :! Nil
 
+-- |
+-- >>> maybeToStrictList (Just "bar")
+-- ["bar"]
+--
+-- >>> maybeToStrictList Nothing
+-- []
 maybeToStrictList :: Maybe a -> StrictList a
 maybeToStrictList Nothing = Nil
 maybeToStrictList (Just x) = x :! Nil
@@ -181,12 +203,19 @@ takeWhile p (x :! xs)
     | p x = x :! takeWhile p xs
     | otherwise = Nil
 
+-- |
+-- >>> drop 3 (sl [1, 2, 3, 4, 5])
+-- [4,5]
 drop :: Int -> StrictList a -> StrictList a
 drop _ Nil = Nil
 drop n xss@(_ :! xs)
     | n <= 0 = xss
     | otherwise = drop (n - 1) xs
 
+-- |
+-- 'deleteIdx' @idx@ removes the element at index @idx@.
+--
+-- prop> not (null xs) ==> Some (deleteIdx 0 xs) == tailOpt xs
 deleteIdx :: Int -> StrictList a -> StrictList a
 deleteIdx _ Nil = Nil
 deleteIdx idx lst@(x :! xs) =
@@ -245,12 +274,14 @@ mapM = Tr.mapM
 mapM_ :: Monad m => (a -> m b) -> StrictList a -> m ()
 mapM_ = F.mapM_
 
+-- | Equivalent of 'Prelude.filter' with 'StrictList'.
 filter :: (a -> Bool) -> StrictList a -> StrictList a
 filter _ Nil = Nil
 filter pred (x :! xs)
     | pred x = x :! filter pred xs
     | otherwise = filter pred xs
 
+-- | Equivalent of 'Data.Maybe.catMaybes' with 'StrictList'.
 catMaybes :: StrictList (Maybe a) -> StrictList a
 catMaybes xs =
     case xs of
@@ -258,12 +289,21 @@ catMaybes xs =
       (Nothing :! xs) -> catMaybes xs
       (Just x :! xs ) -> x :! catMaybes xs
 
+-- | Equivalent of 'Data.Maybe.mapMaybe' with 'StrictList'.
 mapMaybe :: (a -> Maybe b) -> StrictList a -> StrictList b
 mapMaybe f = catMaybes . map f
 
+-- | Equivalent of 'Data.Maybe.mapMaybe' with 'Option' and 'StrictList'.
+--
+-- >>> mapOption (\x -> if even x then Some (x * 2) else None) (sl [1, 2, 3, 4, 5])
+-- [4,8]
 mapOption :: (a -> Option b) -> StrictList a -> StrictList b
 mapOption f = catOptions . map f
 
+-- | Equivalent to 'Data.Maybe.catMaybes' with 'Option' and 'StrictList'.
+--
+-- >>> catOptions (sl [Some 1, None, Some 2, None, None, Some 3, Some 4])
+-- [1,2,3,4]
 catOptions :: StrictList (Option a) -> StrictList a
 catOptions xs =
     case xs of
@@ -271,6 +311,9 @@ catOptions xs =
       (None :! xs) -> catOptions xs
       (Some x :! xs) -> x :! catOptions xs
 
+-- |
+-- >>> catOptionsL [Some 1, None, Some 2, None, None, Some 3, Some 4]
+-- [1,2,3,4]
 catOptionsL :: [Option a] -> StrictList a
 catOptionsL xs =
     case xs of
