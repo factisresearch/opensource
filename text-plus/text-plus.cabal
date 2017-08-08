@@ -2,7 +2,7 @@ name:                text-plus
 version:             0.1.0.1
 synopsis:            Utils for text
 description:         Utils for text
-homepage:            https://github.com/factisresearch/opensource-mono#readme
+homepage:            https://github.com/factisresearch/opensource#readme
 license:             BSD3
 license-file:        LICENSE
 author:              factis research GmbH
@@ -40,4 +40,4 @@ test-suite text-plus-test
 
 source-repository head
   type:     git
-  location: https://github.com/kmein/text-plus
+  location: https://github.com/factisresearch/opensource.git

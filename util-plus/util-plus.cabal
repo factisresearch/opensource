@@ -2,7 +2,7 @@ name:                util-plus
 version:             0.1.0.0
 synopsis:            A collection of commonly used utils
 description:         A collection of commonly used util functions for basic libaries
-homepage:            https://github.com/factisresearch/opensource-mono#readme
+homepage:            https://github.com/factisresearch/opensource#readme
 license:             BSD3
 license-file:        LICENSE
 author:              factis research GmbH
@@ -46,4 +46,4 @@ test-suite util-plus-test
 
 source-repository head
   type:     git
-  location: https://github.com/factisresearch/opensource-mono
+  location: https://github.com/factisresearch/opensource.git

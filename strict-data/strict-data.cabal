@@ -2,7 +2,7 @@ name:                strict-data
 version:             0.2.0.2
 synopsis:            A collection of commonly used strict data structures
 description:         A collection of commonly used strict data structures
-homepage:            https://github.com/agrafix/strict-data#readme
+homepage:            https://github.com/factisresearch/opensource#readme
 license:             BSD3
 license-file:        LICENSE
 author:              Alexander Thiemann
@@ -82,4 +82,4 @@ test-suite strict-data-doctest
 
 source-repository head
   type:     git
-  location: https://github.com/factisresearch/opensource-mono
+  location: https://github.com/factisresearch/opensource.git

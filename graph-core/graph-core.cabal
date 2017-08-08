@@ -2,7 +2,7 @@ name:                graph-core
 version:             0.3.0.0
 synopsis:            Fast, memory efficient and persistent graph implementation
 description:         A small package providing a powerful and easy to use Haskell graph implementation.
-homepage:            https://github.com/factisresearch/opensource-mono
+homepage:            https://github.com/factisresearch/opensource#readme
 license:             MIT
 license-file:        LICENSE
 author:              Stefan Wehr <wehr@cp-med.com>, David Leuschner <leuschner@cp-med.com>, Niklas Baumstark, Jonathan Dimond, Alexander Thiemann <thiemann@cp-med.com>
@@ -45,4 +45,4 @@ test-suite graph-core-tests
 
 source-repository head
   type:     git
-  location: https://github.com/factisresearch/opensource-mono.git
+  location: https://github.com/factisresearch/opensource.git

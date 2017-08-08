@@ -2,7 +2,7 @@ name:                preview
 version:             0.1.0.4
 synopsis:            The method of previewing data (instead of wholly show-ing it)
 description:         The method of previewing data (instead of wholly show-ing it)
-homepage:            https://github.com/factisresearch/opensource-mono#readme
+homepage:            https://github.com/factisresearch/opensource#readme
 license:             BSD3
 license-file:        LICENSE
 author:              factis research GmbH
@@ -26,4 +26,4 @@ library
 
 source-repository head
   type:     git
-  location: https://github.com/factisresearch/opensource-mono
+  location: https://github.com/factisresearch/opensource.git
