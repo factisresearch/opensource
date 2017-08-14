@@ -22,7 +22,7 @@ pattern Fail x <- Err (T.unpack -> x) where
 #endif
 
 data Fail a
-    = Err !T.Text
+    = Err T.Text
     | Ok !a
     deriving (Show, Ord, Eq, Functor, Foldable, Traversable)
 
